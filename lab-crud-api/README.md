@@ -1,7 +1,7 @@
-# Simple Implementation of API and CRUDE
+# Simple Implementation of API and CRUD
 
-Generally followed the steps laid out in fullfilment of my ICS2609's (Enterprise Back-End) laboratory requirement.
-A need for more learning of the coding processes of coding routers and controllers. Attained a good general understanding of how to navigate phpMyAdmin
+Generally followed the steps laid out in fulfillment of my ICS2609's (Enterprise Back-End) laboratory requirement.
+A need for more learning of the coding processes of routers and controllers. Attained a good general understanding of how to navigate phpMyAdmin.
 
 ## Steps are as follows:
 
