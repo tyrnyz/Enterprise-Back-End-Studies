@@ -3,28 +3,17 @@
     <h2>Login</h2>
 
     <form @submit.prevent="onLogin">
-      <div>
-        <label>Email</label><br />
-        <input v-model="email" placeholder="Email" />
-      </div>
-
-      <div style="margin-top:8px">
-        <label>Password</label><br />
-        <input type="password" v-model="password" placeholder="Password" />
-      </div>
-
-      <div style="margin-top:12px">
-        <button type="submit">Login</button>
-      </div>
+      <input v-model="email" placeholder="Email" required />
+      <input v-model="password" type="password" placeholder="Password" required />
+      <button type="submit" :disabled="loading">Login</button>
     </form>
 
-    <p style="margin-top:8px">
-      Don't have account?
-      <a href="#/register" @click.prevent="go('/register')">Register</a>
-    </p>
+    <p v-if="error" style="color:red">{{ error }}</p>
 
-    <div v-if="error" style="color:black; margin-top:8px">
-      {{ error }}
+    <!-- ADD THIS -->
+    <div style="margin-top:12px;">
+      <span>Don't have an account?</span>
+      <router-link to="/register" style="margin-left:6px;">Register</router-link>
     </div>
   </div>
 </template>
@@ -38,26 +27,24 @@ import { setAuth } from "../../utils/auth";
 const email = ref("");
 const password = ref("");
 const error = ref("");
+const loading = ref(false);
 const router = useRouter();
-
-function go(path) {
-  router.push(path);
-}
 
 async function onLogin() {
   error.value = "";
+  loading.value = true;
   try {
     const data = await authService.login({ email: email.value, password: password.value });
-    const token = data.token ?? data.accessToken ?? null;
-    const user = data.user ?? data;
-    if (!token) {
-      error.value = "No token returned from server";
+    if (data.token && (data.user || data.user === undefined)) {
+      setAuth(data.token, data.user ?? { id: data.id, email: data.email, fullName: data.fullName });
+      router.push("/");
       return;
     }
-    setAuth(token, user);
-    router.push("/");
+    error.value = "Login failed: no token returned";
   } catch (e) {
     error.value = e?.response?.data?.message || e?.message || "Login failed";
+  } finally {
+    loading.value = false;
   }
 }
 </script>

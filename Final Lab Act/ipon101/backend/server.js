@@ -9,12 +9,13 @@ import categoryRoutes from "./routes/categories.js";
 import transactionRoutes from "./routes/transactions.js";
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_ORIGIN || "http://localhost:5173" }));
 app.use(express.json());
 
-app.use("/auth", authRoutes);
-app.use("/categories", categoryRoutes);
-app.use("/transactions", transactionRoutes);
+// mount with /api prefix so frontend requests to /api/auth/* match
+app.use("/api/auth", authRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Backend running on http://localhost:${port}`));
+app.listen(port, "0.0.0.0", () => console.log(`Backend running on http://localhost:${port}`));

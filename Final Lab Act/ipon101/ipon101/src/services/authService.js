@@ -2,22 +2,22 @@
 import api from "./api";
 
 export default {
-  register: async (payload) => {
-    const res = await api.post("/auth/register", payload);
-    return res.data; // expect { token, user } (or user) — store handles both
+  // POST http://localhost:3000/api/auth/register -> { token, user }
+  register(payload) {
+    return api.post("/api/auth/register", payload).then(r => r.data);
   },
 
-  login: async ({ email, password }) => {
-    const res = await api.post("/auth/login", { email, password });
-    return res.data; // expect { token, user }
+  // POST http://localhost:3000/api/auth/login -> { token, user }
+  login(payload) {
+    return api.post("/api/auth/login", payload).then(r => r.data);
   },
 
-  me: async () => {
-    const res = await api.get("/auth/me"); // optional if implemented
-    return res.data;
+  // GET http://localhost:3000/api/auth/me -> { user }
+  me() {
+    return api.get("/api/auth/me").then(r => r.data);
   },
 
-  logout: async () => {
+  logout() {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_user");
   }

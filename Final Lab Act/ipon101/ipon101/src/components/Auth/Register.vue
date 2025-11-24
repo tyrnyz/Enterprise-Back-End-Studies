@@ -1,31 +1,13 @@
 <template>
   <div>
     <h2>Register</h2>
-
     <form @submit.prevent="onRegister">
-      <div>
-        <label>Full name</label><br />
-        <input v-model="fullName" placeholder="Full name" />
-      </div>
-
-      <div style="margin-top:8px">
-        <label>Email</label><br />
-        <input v-model="email" placeholder="Email" />
-      </div>
-
-      <div style="margin-top:8px">
-        <label>Password</label><br />
-        <input type="password" v-model="password" placeholder="Password" />
-      </div>
-
-      <div style="margin-top:12px">
-        <button type="submit">Create account</button>
-      </div>
+      <input v-model="fullName" placeholder="Full name" required />
+      <input v-model="email" placeholder="Email" required />
+      <input v-model="password" type="password" placeholder="Password" required />
+      <button type="submit" :disabled="loading">Create account</button>
     </form>
-
-    <div v-if="error" style="color:black; margin-top:8px">
-      {{ error }}
-    </div>
+    <p v-if="error" style="color:red">{{ error }}</p>
   </div>
 </template>
 
@@ -39,26 +21,30 @@ const fullName = ref("");
 const email = ref("");
 const password = ref("");
 const error = ref("");
+const loading = ref(false);
 const router = useRouter();
 
 async function onRegister() {
   error.value = "";
+  loading.value = true;
   try {
-    const data = await authService.register({ fullName: fullName.value, email: email.value, password: password.value });
+    const data = await authService.register({
+      fullName: fullName.value,
+      email: email.value,
+      password: password.value,
+    });
 
-    // If server returns token+user
-    if (data.token) {
+    // If server returned token+user, store them
+    if (data.token && data.user) {
       setAuth(data.token, data.user);
       router.push("/");
       return;
     }
 
-    // Otherwise try to login after registration
+    // fallback: try to login and set token
     const loginRes = await authService.login({ email: email.value, password: password.value });
-    const token = loginRes.token ?? loginRes.accessToken;
-    const user = loginRes.user ?? loginRes;
-    if (token) {
-      setAuth(token, user);
+    if (loginRes.token && loginRes.user) {
+      setAuth(loginRes.token, loginRes.user);
       router.push("/");
       return;
     }
@@ -66,6 +52,8 @@ async function onRegister() {
     router.push("/login");
   } catch (e) {
     error.value = e?.response?.data?.message || e?.message || "Registration failed";
+  } finally {
+    loading.value = false;
   }
 }
 </script>

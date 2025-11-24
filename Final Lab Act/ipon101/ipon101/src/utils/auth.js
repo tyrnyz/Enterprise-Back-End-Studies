@@ -12,18 +12,7 @@ export function clearAuth() {
   localStorage.removeItem(USER_KEY);
 }
 
-export function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
-}
-
+export function getToken() { return localStorage.getItem(TOKEN_KEY); }
 export function getUser() {
-  try {
-    return JSON.parse(localStorage.getItem(USER_KEY) || "null");
-  } catch {
-    return null;
-  }
-}
-
-export function isAuthenticated() {
-  return !!getToken();
+  try { return JSON.parse(localStorage.getItem(USER_KEY) || "null"); } catch { return null; }
 }

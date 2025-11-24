@@ -2,7 +2,13 @@
 import api from "./api";
 
 export default {
-  list: (params = {}) => api.get("/categories", { params }).then(r => r.data),
-  create: (payload) => api.post("/categories", payload).then(r => r.data),
-  remove: (id) => api.delete(`/categories/${id}`).then(r => r.data),
+  list() {
+    return api.get("/api/categories").then(r => r.data);
+  },
+  create(payload) {
+    return api.post("/api/categories", payload).then(r => r.data);
+  },
+  remove(id) {
+    return api.delete(`/api/categories/${id}`).then(r => r.data);
+  }
 };
