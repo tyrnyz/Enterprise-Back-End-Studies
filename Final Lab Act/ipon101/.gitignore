@@ -1,0 +1,22 @@
+/node_modules/
+/**/node_modules/
+.env
+**/.env
+.DS_Store
+Thumbs.db
+
+# Backend
+backend/node_modules/
+backend/.env
+backend/*.log
+
+# Frontend
+ipon101/node_modules/
+ipon101/.env
+ipon101/dist/
+
+# OS + IDE
+.vscode/
+.idea/
+npm-debug.log
+yarn-error.log
