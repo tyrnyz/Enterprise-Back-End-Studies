@@ -1,5 +1,5 @@
 # ───────────────────────────────
-# Node dependencies
+# Node.js dependencies
 # ───────────────────────────────
 node_modules/
 npm-debug.log
@@ -8,7 +8,8 @@ yarn-error.log*
 package-lock.json
 
 # ───────────────────────────────
-# Local env files (frontend API URL)
+# Environment variables
+# NEVER commit your secrets!
 # ───────────────────────────────
 .env
 .env.local
@@ -17,24 +18,13 @@ package-lock.json
 .env.test
 
 # ───────────────────────────────
-# Build output
-# ───────────────────────────────
-dist/
-build/
-
-# ───────────────────────────────
-# Vite cache
-# ───────────────────────────────
-.vite/
-
-# ───────────────────────────────
 # Logs
 # ───────────────────────────────
 logs/
 *.log
 
 # ───────────────────────────────
-# OS files
+# OS generated files
 # ───────────────────────────────
 .DS_Store
 Thumbs.db
@@ -44,3 +34,22 @@ Thumbs.db
 # ───────────────────────────────
 .vscode/
 .idea/
+
+# ───────────────────────────────
+# Optional: build artifacts
+# ───────────────────────────────
+dist/
+build/
+
+# ───────────────────────────────
+# Runtime files
+# ───────────────────────────────
+*.pid
+*.seed
+*.pid.lock
+
+# ───────────────────────────────
+# MySQL dump backups
+# ───────────────────────────────
+*.sql
+*.sql.gz
