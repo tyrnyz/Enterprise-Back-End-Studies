@@ -10,29 +10,58 @@
       <table class="table table-striped table-hover align-middle">
         <thead class="table-dark">
           <tr>
-            <th scope="col">Date</th><th scope="col">Type</th><th scope="col">Category</th><th scope="col" class="text-end">Amount</th><th scope="col" class="text-center">Actions</th>
+            <th scope="col">Date</th>
+            <th scope="col">Type</th>
+            <th scope="col">Category</th>
+            <th scope="col" class="text-end">Amount</th>
+            <th scope="col" class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="t in transactions" :key="t.id">
-            <td>{{ t.transactionDate || t.createdAt.slice(0,10) }}</td>
-            <td><span class="badge" :class="t.type === 'income' ? 'bg-success' : 'bg-danger'">{{ t.type }}</span></td>
+            <!-- nicely formatted date -->
+            <td>{{ formatDate(t.transactionDate || t.createdAt) }}</td>
+
+            <td>
+              <span
+                class="badge"
+                :class="t.type === 'income' ? 'bg-success' : 'bg-danger'"
+              >
+                {{ t.type }}
+              </span>
+            </td>
+
             <td>{{ categoryName(t.categoryId) }}</td>
-            <td class="text-end fw-bold" :class="t.type === 'income' ? 'text-success' : 'text-danger'">
+
+            <td
+              class="text-end fw-bold"
+              :class="t.type === 'income' ? 'text-success' : 'text-danger'"
+            >
               {{ t.type === 'income' ? '+' : '-' }} ₱ {{ t.amount }}
             </td>
+
             <td class="text-center">
-              <button @click="remove(t.id)" class="btn btn-sm btn-outline-danger">Delete</button>
+              <button
+                @click="remove(t.id)"
+                class="btn btn-sm btn-outline-danger"
+              >
+                Delete
+              </button>
             </td>
           </tr>
+
           <tr v-if="!transactions.length">
-            <td colspan="5" class="text-center text-muted">No transactions recorded.</td>
+            <td colspan="5" class="text-center text-muted">
+              No transactions recorded.
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <div v-if="error" class="alert alert-danger mt-4">{{ errorMessage }}</div>
+    <div v-if="error" class="alert alert-danger mt-4">
+      {{ errorMessage }}
+    </div>
   </div>
 </template>
 
@@ -50,13 +79,18 @@ const loading = ref(false);
 const error = ref(null);
 const router = useRouter();
 
-const errorMessage = computed(() => (error.value ? (error.value.message || String(error.value)) : ""));
+const errorMessage = computed(() =>
+  error.value ? error.value.message || String(error.value) : ""
+);
 
 async function load() {
   error.value = null;
   loading.value = true;
   try {
-    if (!getToken()) { router.push("/login"); return; }
+    if (!getToken()) {
+      router.push("/login");
+      return;
+    }
     transactions.value = await transactionService.list();
     categories.value = await categoryService.list();
   } catch (e) {
@@ -73,14 +107,32 @@ async function remove(id) {
   if (!confirm("Are you sure you want to delete this transaction?")) return;
   try {
     await transactionService.remove(id);
-    transactions.value = transactions.value.filter(t => t.id !== id);
+    transactions.value = transactions.value.filter((t) => t.id !== id);
   } catch (e) {
     error.value = e;
   }
 }
 
 function categoryName(catId) {
-  const c = categories.value.find(x => x.id === catId);
+  const c = categories.value.find((x) => x.id === catId);
   return c ? c.name : "-";
+}
+
+/** Format any date string from backend into something readable */
+function formatDate(raw) {
+  if (!raw) return "";
+
+  // Try to parse as Date first
+  const d = new Date(raw);
+  if (!isNaN(d)) {
+    return d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  // Fallback: just show first 10 chars (YYYY-MM-DD)
+  return String(raw).slice(0, 10);
 }
 </script>
